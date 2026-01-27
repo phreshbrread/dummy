@@ -2,7 +2,6 @@
 #include <stdlib.h> // For strtol() and exit()
 #include <string.h> // For strcpy() and strlen()
 
-#define MAX_DEST_LENGTH 1024
     /*
      * Usage: dummy [size] [unit] [destination]
      * Example: dummy 24 m ~/test
@@ -43,6 +42,7 @@ int main(int argc, char *argv[]) {
     */
 
     unsigned long long size;
+    const int max_dest_length = 1042;
 
     if (strtol(argv[1], NULL, 10) <= 0) { // Only assign size if arg is valid
         invalid_usage();
@@ -51,13 +51,13 @@ int main(int argc, char *argv[]) {
     size = strtol(argv[1], NULL, 10); // Set size to first argument
 
     char unit = *argv[2]; // Set unit to second argument
-    char destination[MAX_DEST_LENGTH];
+    char destination[max_dest_length];
 
-    if (strlen(argv[3]) > MAX_DEST_LENGTH) { // Check validity of destination
+    if (strlen(argv[3]) > max_dest_length) { // Check validity of destination
         invalid_usage();
     }
 
-    strcpy(destination, argv[3]);
+    strcpy(destination, argv[3]); // Copy value of argv[3] to destination
 
 #ifdef DEBUG
     printf("\nSize: %llu %c\nDestination: %s\n", size, unit, destination);
