@@ -21,34 +21,16 @@ int invalid_usage() {
     exit(1);
 }
 
-#ifdef DEBUG
-void debug_print_args(int argc, char *argv[]) {
-    printf("Arguments explicitly given: %i\n", argc - 1);
-
-    printf("\nargv[0] = %s\n\n", argv[0]);    
-    
-    for (int i = 1; i < argc; ++i) {
-        printf("argv[%d] = %s\n", i, argv[i]);
-    }
-
-    printf("----------------------------------------\n\n");
-}
-#endif
-
 int main(int argc, char *argv[]) {
     /*
      * 1. Get user args [DONE]
      * 2. Ensure only 3 args are passed, remember
      * that argv[0] is the execuatable's path [DONE]
      * 3. Check to ensure size, unit and destination are valid [DONE]
-     * 4. Convert size if necessary
+     * 4. Convert size if necessary [DONE]
      *
      * Make sure to handle buffer overflow crash if path is too long
     */
-
-#ifdef DEBUG
-    debug_print_args(argc, argv);
-#endif
 
     // Check for 4 here because the first arg is always the executable's path
     if (argc != 4) {
@@ -106,7 +88,7 @@ int main(int argc, char *argv[]) {
             invalid_usage();
     }
 
-    printf("Actual Size: %llu byte(s)", size);
+    printf("Actual Size: %llu byte(s)\n", size);
 
     return 0;
 }
