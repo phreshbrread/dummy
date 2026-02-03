@@ -90,5 +90,15 @@ int main(int argc, char *argv[]) {
 
     printf("Actual Size: %llu byte(s)\n", size);
 
+
+    FILE *fptr;                         // Create file pointer
+    
+    fptr = fopen(destination, "w");     // Open file at destination
+    for (int i = 0; i <= size; ++i) {   // Fill with zeroes until size is reached
+        fprintf(fptr, "%d", 0);
+    }
+
+    fclose(fptr);                       // Close destination file
+
     return 0;
 }
