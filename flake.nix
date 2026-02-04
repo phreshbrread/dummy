@@ -17,6 +17,7 @@
         buildInputs = with pkgs; [
           clang
           clang-tools
+          hexedit
         ];
       };
     };

@@ -21,16 +21,6 @@ int invalid_usage() {
 }
 
 int main(int argc, char *argv[]) {
-    /*
-     * 1. Get user args [DONE]
-     * 2. Ensure only 3 args are passed, remember
-     * that argv[0] is the execuatable's path [DONE]
-     * 3. Check to ensure size, unit and destination are valid [DONE]
-     * 4. Convert size if necessary [DONE]
-     *
-     * Make sure to handle buffer overflow crash if path is too long
-    */
-
     // Check for 4 here because the first arg is always the executable's path
     if (argc != 4) {
         invalid_usage();
@@ -59,10 +49,6 @@ int main(int argc, char *argv[]) {
 
     strcpy(destination, argv[3]); // Copy value of argv[3] to destination
 
-#ifdef DEBUG
-    printf("\nSize: %llu %c\nDestination: %s\n", size, unit, destination);
-#endif
-
     // Switch case to determine size
     switch (unit) {
         case 'b':
@@ -88,12 +74,20 @@ int main(int argc, char *argv[]) {
             invalid_usage();
     }
 
+    printf("\nSize: %llu %c\nDestination: %s\n", size, unit, destination);
     printf("Actual Size: %llu byte(s)\n", size);
 
+    /* TODO
+     * - Make faster
+     * - Fix accuracy issues
+     * - Handle errors
+     * - Set default destination
+     * - Handle buffer overflow crash if path is too long
+    */    
 
-    FILE *fptr;                         // Create file pointer
+    FILE *fptr;                         // Create file pointer 
+    fptr = fopen(destination, "wb");    // Open file at destination
     
-    fptr = fopen(destination, "w");     // Open file at destination
     for (int i = 0; i <= size; ++i) {   // Fill with zeroes until size is reached
         fprintf(fptr, "%d", 0);
     }
