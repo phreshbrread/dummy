@@ -85,6 +85,7 @@ int main(int argc, char *argv[]) {
      * - Handle buffer overflow crash if path is too long
     */    
 
+    // This is a really shit way of doing this and only gets slower the larger the file
     FILE *fptr;                         // Create file pointer 
     fptr = fopen(destination, "wb");    // Open file at destination
     
