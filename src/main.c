@@ -27,6 +27,37 @@ int invalid_usage() {
     exit(1);
 }
 
+void write_dummy_file_new(unsigned long long *size, char *destination) {
+    FILE *fptr;
+    if ((fptr = fopen(destination, "wb")) == NULL) {
+        fprintf(stderr, "Failed to write file\n");
+        exit(EXIT_FAILURE);
+    }
+
+    char buffer[*size];
+    fwrite(buffer, 1, *size, fptr);
+
+    // Close destination file
+    fclose(fptr);
+}
+
+void write_dummy_file(unsigned long long *size, char *destination) {
+    FILE *fptr;
+    if ((fptr = fopen(destination, "wb")) == NULL) {
+        fprintf(stderr, "Failed to write file\n");
+        exit(EXIT_FAILURE);
+    }
+
+    // Fill with zeroes until size is reached
+    // This is a really shit way of doing this and only gets slower the larger the file
+    for (unsigned long long i = 0; i <= *size; ++i) {
+        fputc(0, fptr);
+    }
+
+    // Close destination file
+    fclose(fptr);
+}
+
 int main(int argc, char *argv[]) {
     // Check for 4 here because the first arg is always the executable's path
     if (argc != 4) {
@@ -78,22 +109,9 @@ int main(int argc, char *argv[]) {
      * - Handle buffer overflow crash if path is too long
      */
 
-    FILE *fptr;
-    if ((fptr = fopen(destination, "wb")) == NULL) {
-        fprintf(stderr, "Failed to write file\n");
-        exit(EXIT_FAILURE);
-    }
-
     printf("Writing file...\n");
 
-    // Fill with zeroes until size is reached
-    // This is a really shit way of doing this and only gets slower the larger the file
-    for (unsigned long long i = 0; i <= size; ++i) {
-        fputc(0, fptr);
-    }
-
-    // Close destination file
-    fclose(fptr);
+    write_dummy_file_new(&size, destination);
 
     return 0;
 }
