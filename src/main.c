@@ -84,10 +84,12 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
+    printf("Writing file...\n");
+
     // Fill with zeroes until size is reached
     // This is a really shit way of doing this and only gets slower the larger the file
-    for (int i = 0; i <= size; ++i) {
-        fprintf(fptr, "%d", 0);
+    for (unsigned long long i = 0; i <= size; ++i) {
+        fputc(0, fptr);
     }
 
     // Close destination file
