@@ -1,19 +1,24 @@
+#include <ctype.h>
 #include <stdio.h>
-#include <stdlib.h> // For strtol() and exit()
-#include <string.h> // For strcpy() and strlen()
+#include <stdlib.h>
+#include <string.h>
 
-    /*
-     * Usage: dummy [size] [unit] [destination]
-     * Example: dummy 24 m ~/test
-     *
-     * Rules:
-     *  - Size must be greater than 0
-     *  - Unit must be in b, k, m, g, or t
-     *    (lower or upper works)
-     *  - If no destination is specified, a
-     *    default file called 'dummy-file' will be
-     *    created in the current directory
-    */
+#define MAX_DEST_LENGTH 1024
+
+/*
+ * Usage: dummy [size] [unit] [destination]
+ * Example: dummy 24 m ~/test
+ *
+ * Rules:
+ *  - Size must be greater than 0
+ *  - Unit must be in b, k, m, g, or t
+ *    (lower or upper works)
+ *  - If no destination is specified, a
+ *    default file called 'dummy-file' will be
+ *    created in the current directory
+ */
+
+unsigned long long size = 0;
 
 int invalid_usage() {
     printf("Usage: dummy [size] [unit] [destination]\nExample: dummy 24 M ~/Desktop\n");
@@ -26,24 +31,16 @@ int main(int argc, char *argv[]) {
         invalid_usage();
     }
 
-    /* 
-     * strtol() -> string to long, the 10
-     * specifies decimal (use 16 for hexadecimal)
-    */
-
-    unsigned long long size;
-    const int max_dest_length = 1042;
-
     if (strtol(argv[1], NULL, 10) <= 0) { // Only assign size if arg is valid
         invalid_usage();
     }
-    
+
     size = strtol(argv[1], NULL, 10); // Set size to first argument
 
-    char unit = *argv[2]; // Set unit to second argument
-    char destination[max_dest_length];
+    char unit = (unsigned char)tolower(*argv[2]); // Set unit to second argument
+    char destination[MAX_DEST_LENGTH];
 
-    if (strlen(argv[3]) > max_dest_length) { // Check validity of destination
+    if (strlen(argv[3]) > MAX_DEST_LENGTH) { // Check validity of destination
         invalid_usage();
     }
 
@@ -52,22 +49,17 @@ int main(int argc, char *argv[]) {
     // Switch case to determine size
     switch (unit) {
         case 'b':
-        case 'B':
             break;
         case 'k':
-        case 'K':
             size *= 1024;
             break;
         case 'm':
-        case 'M':
             size *= 1048576;
             break;
         case 'g':
-        case 'G':
             size *= 1073741824;
             break;
         case 't':
-        case 'T':
             size *= 1099511627776;
             break;
         default:
@@ -77,23 +69,28 @@ int main(int argc, char *argv[]) {
     printf("\nSize: %llu %c\nDestination: %s\n", size, unit, destination);
     printf("Actual Size: %llu byte(s)\n", size);
 
-    /* TODO
+    /* TODO:
      * - Make faster
      * - Fix accuracy issues
      * - Handle errors
      * - Set default destination
      * - Handle buffer overflow crash if path is too long
-    */    
+     */
 
     // This is a really shit way of doing this and only gets slower the larger the file
-    FILE *fptr;                         // Create file pointer 
-    fptr = fopen(destination, "wb");    // Open file at destination
-    
-    for (int i = 0; i <= size; ++i) {   // Fill with zeroes until size is reached
+    FILE *fptr;
+    if ((fptr = fopen(destination, "wb")) == NULL) {
+        fprintf(stderr, "Failed to write file\n");
+        exit(EXIT_FAILURE);
+    }
+
+    // Fill with zeroes until size is reached
+    for (int i = 0; i <= size; ++i) {
         fprintf(fptr, "%d", 0);
     }
 
-    fclose(fptr);                       // Close destination file
+    // Close destination file
+    fclose(fptr);
 
     return 0;
 }
