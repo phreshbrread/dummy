@@ -15,7 +15,9 @@
       devShells.${system}.default = pkgs.mkShell {
         nativeBuildInputs = [ pkgs.pkg-config ];
         buildInputs = with pkgs; [
-          gcc
+          clang
+          clang-tools
+          hexedit
         ];
       };
     };
