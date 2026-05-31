@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_DEST_LENGTH 1024
+#define MAX_DEST_LENGTH 256
 
 /*
  * Usage: dummy [size] [unit] [destination]
@@ -19,6 +19,8 @@
  */
 
 unsigned long long size = 0;
+char unit;
+char destination[MAX_DEST_LENGTH];
 
 int invalid_usage() {
     printf("Usage: dummy [size] [unit] [destination]\nExample: dummy 24 M ~/Desktop\n");
@@ -37,8 +39,7 @@ int main(int argc, char *argv[]) {
 
     size = strtol(argv[1], NULL, 10); // Set size to first argument
 
-    char unit = (unsigned char)tolower(*argv[2]); // Set unit to second argument
-    char destination[MAX_DEST_LENGTH];
+    unit = (unsigned char)tolower(*argv[2]); // Set unit to second argument
 
     if (strlen(argv[3]) > MAX_DEST_LENGTH) { // Check validity of destination
         invalid_usage();
@@ -77,7 +78,6 @@ int main(int argc, char *argv[]) {
      * - Handle buffer overflow crash if path is too long
      */
 
-    // This is a really shit way of doing this and only gets slower the larger the file
     FILE *fptr;
     if ((fptr = fopen(destination, "wb")) == NULL) {
         fprintf(stderr, "Failed to write file\n");
@@ -85,6 +85,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Fill with zeroes until size is reached
+    // This is a really shit way of doing this and only gets slower the larger the file
     for (int i = 0; i <= size; ++i) {
         fprintf(fptr, "%d", 0);
     }
