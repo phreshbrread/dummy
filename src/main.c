@@ -8,15 +8,12 @@
 
 /*
  * Usage: dummy [size] [unit] [destination]
- * Example: dummy 24 m ~/test
+ * Example: dummy 2 g ./test
  *
  * Rules:
- *  - Size must be greater than 0
+ *  - Size must be positive
  *  - Unit must be in b, k, m, g, or t
  *    (lower or upper works)
- *  - If no destination is specified, a
- *    default file called 'dummy-file' will be
- *    created in the current directory
  */
 
 uint64_t size = 0;
@@ -25,7 +22,7 @@ char destination[MAX_DEST_LENGTH];
 
 int invalid_usage() {
     printf("Usage: dummy [size] [unit] [destination]\nExample: dummy 24 M ~/Desktop\n");
-    exit(1);
+    exit(EXIT_FAILURE);
 }
 
 void write_dummy_file(uint64_t *size, char *destination) {
@@ -35,6 +32,7 @@ void write_dummy_file(uint64_t *size, char *destination) {
         exit(EXIT_FAILURE);
     }
 
+    // TODO: Write file in chunks so memory size is irrelevant
     uint64_t *buf = malloc(*size);
 
     fwrite(buf, sizeof(*buf), *size, fptr);
@@ -87,8 +85,6 @@ int main(int argc, char *argv[]) {
     printf("Actual Size: %lu byte(s)\n", size);
 
     /* TODO:
-     * - Make faster
-     * - Fix accuracy issues
      * - Handle errors
      * - Set default destination
      * - Handle buffer overflow crash if path is too long
@@ -100,5 +96,5 @@ int main(int argc, char *argv[]) {
 
     printf("\n");
 
-    return 0;
+    return EXIT_SUCCESS;
 }
