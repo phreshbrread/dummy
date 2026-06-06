@@ -1,4 +1,5 @@
 #include <ctype.h>
+#include <errno.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,17 +26,26 @@ int invalid_usage() {
     exit(EXIT_FAILURE);
 }
 
-void write_dummy_file(uint64_t *size, char *destination) {
+void write_dummy_file(uint64_t size, char *destination) {
     FILE *fptr;
     if ((fptr = fopen(destination, "wb")) == NULL) {
-        fprintf(stderr, "Failed to write file.\n");
+        perror("Failed to open file");
         exit(EXIT_FAILURE);
     }
 
     // TODO: Write file in chunks so memory size is irrelevant
-    uint64_t *buf = malloc(*size);
+    // Allocate memory properly:
+    // Should take into account current memory available + size
+    uint64_t *buf = malloc(size);
 
-    fwrite(buf, sizeof(*buf), *size, fptr);
+    size_t written = fwrite(buf, 1, size, fptr);
+
+    if (written != size) {
+        perror("Failed to write file");
+        exit(EXIT_FAILURE);
+    }
+
+    printf("\nBytes written: %lu", written);
 
     // Close destination file
     fclose(fptr);
@@ -81,20 +91,18 @@ int main(int argc, char *argv[]) {
             invalid_usage();
     }
 
-    printf("\nSize: %lu %c\nDestination: %s\n", size, unit, destination);
-    printf("Actual Size: %lu byte(s)\n", size);
-
-    /* TODO:
-     * - Handle errors
-     * - Set default destination
-     * - Handle buffer overflow crash if path is too long
-     */
-
+    printf("\nSize: %lu bytes\nDestination: %s\n", size, destination);
     printf("Writing file...");
 
-    write_dummy_file(&size, destination);
+    write_dummy_file(size, destination);
 
     printf("\n");
 
     return EXIT_SUCCESS;
 }
+
+/* TODO:
+ * - Handle errors
+ * - Set default destination
+ * - Handle buffer overflow crash if path is too long
+ */
