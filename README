@@ -1,7 +1,5 @@
 Command-line tool to create dummy files of user-specified size
 This is essentially a rewrite of create-file but in C, specifically for the sake of practice/learning.
 
-Quite slow and not very useful in its current state.
-
 Usage: dummy [size] [unit] [destination]
-Example: dummy 24 m ~/test
+Example: dummy 2 g ~/test

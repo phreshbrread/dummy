@@ -1,9 +1,10 @@
 #include <ctype.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_DEST_LENGTH 256
+#define MAX_DEST_LENGTH 4096
 
 /*
  * Usage: dummy [size] [unit] [destination]
@@ -18,7 +19,7 @@
  *    created in the current directory
  */
 
-unsigned long long size = 0;
+uint64_t size = 0;
 char unit;
 char destination[MAX_DEST_LENGTH];
 
@@ -27,32 +28,16 @@ int invalid_usage() {
     exit(1);
 }
 
-void write_dummy_file_new(unsigned long long *size, char *destination) {
+void write_dummy_file(uint64_t *size, char *destination) {
     FILE *fptr;
     if ((fptr = fopen(destination, "wb")) == NULL) {
-        fprintf(stderr, "Failed to write file\n");
+        fprintf(stderr, "Failed to write file.\n");
         exit(EXIT_FAILURE);
     }
 
-    char buffer[*size];
-    fwrite(buffer, 1, *size, fptr);
+    uint64_t *buf = malloc(*size);
 
-    // Close destination file
-    fclose(fptr);
-}
-
-void write_dummy_file(unsigned long long *size, char *destination) {
-    FILE *fptr;
-    if ((fptr = fopen(destination, "wb")) == NULL) {
-        fprintf(stderr, "Failed to write file\n");
-        exit(EXIT_FAILURE);
-    }
-
-    // Fill with zeroes until size is reached
-    // This is a really shit way of doing this and only gets slower the larger the file
-    for (unsigned long long i = 0; i <= *size; ++i) {
-        fputc(0, fptr);
-    }
+    fwrite(buf, sizeof(*buf), *size, fptr);
 
     // Close destination file
     fclose(fptr);
@@ -98,8 +83,8 @@ int main(int argc, char *argv[]) {
             invalid_usage();
     }
 
-    printf("\nSize: %llu %c\nDestination: %s\n", size, unit, destination);
-    printf("Actual Size: %llu byte(s)\n", size);
+    printf("\nSize: %lu %c\nDestination: %s\n", size, unit, destination);
+    printf("Actual Size: %lu byte(s)\n", size);
 
     /* TODO:
      * - Make faster
@@ -109,9 +94,11 @@ int main(int argc, char *argv[]) {
      * - Handle buffer overflow crash if path is too long
      */
 
-    printf("Writing file...\n");
+    printf("Writing file...");
 
-    write_dummy_file_new(&size, destination);
+    write_dummy_file(&size, destination);
+
+    printf("\n");
 
     return 0;
 }
