@@ -1,6 +1,6 @@
 all: dummy
 
-dummy: src/main.c
+dummy:
 	mkdir -p bin/ && gcc -Wall -Wextra src/main.c -o bin/dummy
 
 clean:
