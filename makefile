@@ -1,7 +1,7 @@
 all: dummy
 
-dummy: ./src/main.c
-	gcc -Wall -Wextra ./src/main.c -o dummy
+dummy: src/main.c
+	mkdir -p bin/ && gcc -Wall -Wextra src/main.c -o bin/dummy
 
 clean:
-	rm -f dummy
+	rm -rf bin/
