@@ -33,12 +33,15 @@ void write_dummy_file(uint64_t size, char *destination) {
         exit(EXIT_FAILURE);
     }
 
-    // TODO: Write file in chunks so memory size is irrelevant
-    // Allocate memory properly:
-    // Should take into account current memory available + size
-    uint64_t *buf = malloc(size);
+    // TODO: Adjust chunk size
+    const int chunk_size = 65536;
+    uint64_t *buf = malloc(chunk_size);
 
-    size_t written = fwrite(buf, 1, size, fptr);
+    size_t written = 0;
+
+    while (written < size) {
+        written += fwrite(buf, 1, chunk_size, fptr);
+    }
 
     if (written != size) {
         perror("Failed to write file");
