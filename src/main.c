@@ -17,42 +17,12 @@
  *    (lower or upper works)
  */
 
+char     unit;
+char     destination[MAX_DEST_LENGTH];
 uint64_t size = 0;
-char unit;
-char destination[MAX_DEST_LENGTH];
 
-int invalid_usage() {
-    printf("Usage: dummy [size] [unit] [destination]\nExample: dummy 24 M ~/Desktop\n");
-    exit(EXIT_FAILURE);
-}
-
-void write_dummy_file(uint64_t size, char *destination) {
-    FILE *fptr;
-    if ((fptr = fopen(destination, "wb")) == NULL) {
-        perror("Failed to open file");
-        exit(EXIT_FAILURE);
-    }
-
-    // TODO: Adjust chunk size
-    const int chunk_size = 65536;
-    uint64_t *buf = malloc(chunk_size);
-
-    size_t written = 0;
-
-    while (written < size) {
-        written += fwrite(buf, 1, chunk_size, fptr);
-    }
-
-    if (written != size) {
-        perror("Failed to write file");
-        exit(EXIT_FAILURE);
-    }
-
-    printf("\nBytes written: %lu", written);
-
-    // Close destination file
-    fclose(fptr);
-}
+int invalid_usage();
+void write_dummy_file(uint64_t size, char *destination);
 
 int main(int argc, char *argv[]) {
     // Check for 4 here because the first arg is always the executable's path
@@ -95,13 +65,46 @@ int main(int argc, char *argv[]) {
     }
 
     printf("\nSize: %lu bytes\nDestination: %s\n", size, destination);
-    printf("Writing file...");
+    printf("Writing file...\n");
 
     write_dummy_file(size, destination);
 
     printf("\n");
 
     return EXIT_SUCCESS;
+}
+
+int invalid_usage() {
+    printf("Usage: dummy [size] [unit] [destination]\nExample: dummy 24 M ~/Desktop\n");
+    exit(EXIT_FAILURE);
+}
+
+void write_dummy_file(uint64_t size, char *destination) {
+    FILE *fptr;
+    if ((fptr = fopen(destination, "wb")) == NULL) {
+        perror("Failed to open file");
+        exit(EXIT_FAILURE);
+    }
+
+    // TODO: Adjust chunk size
+    const int chunk_size = 65536;
+    uint64_t *buf = malloc(chunk_size);
+
+    size_t written = 0;
+
+    while (written < size) {
+        written += fwrite(buf, 1, chunk_size, fptr);
+    }
+
+    if (written != size) {
+        perror("Failed to write file");
+        exit(EXIT_FAILURE);
+    }
+
+    printf("\nBytes written: %lu", written);
+
+    // Close destination file
+    fclose(fptr);
 }
 
 /* TODO:
