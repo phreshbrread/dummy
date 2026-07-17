@@ -6,6 +6,7 @@
 #include <string.h>
 
 #define MAX_DEST_LENGTH 4096
+#define DEFAULT_OUTPUT "./dummy"
 
 /*
  * Usage: dummy [size] [unit] [destination]
@@ -34,17 +35,16 @@ int main(int argc, char *argv[]) {
         invalid_usage();
     }
 
-    size = strtol(argv[1], NULL, 10); // Set size to first argument
+    size = strtol(argv[1], NULL, 10);
+    unit = (unsigned char)tolower(*argv[2]);
 
-    unit = (unsigned char)tolower(*argv[2]); // Set unit to second argument
-
-    if (strlen(argv[3]) > MAX_DEST_LENGTH) { // Check validity of destination
+    // Check validity of destination
+    if (strlen(argv[3]) > MAX_DEST_LENGTH) {
         invalid_usage();
     }
 
-    strcpy(destination, argv[3]); // Copy value of argv[3] to destination
+    strcpy(destination, argv[3]);
 
-    // Switch case to determine size
     switch (unit) {
         case 'b':
             break;
