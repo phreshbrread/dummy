@@ -1,5 +1,5 @@
 #include <ctype.h>
-#include <errno.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,7 +23,7 @@ char     destination[MAX_DEST_LENGTH];
 uint64_t size = 0;
 
 int invalid_usage();
-void write_dummy_file(uint64_t size, char *destination);
+void write_dummy_file(uint64_t size, char *destination, bool should_chunk);
 
 int main(int argc, char *argv[]) {
     // Check for 4 here because the first arg is always the executable's path
@@ -45,6 +45,8 @@ int main(int argc, char *argv[]) {
 
     strcpy(destination, argv[3]);
 
+    bool should_chunk = false;
+
     switch (unit) {
         case 'b':
             break;
@@ -56,9 +58,11 @@ int main(int argc, char *argv[]) {
             break;
         case 'g':
             size *= 1073741824;
+            should_chunk = true;
             break;
         case 't':
             size *= 1099511627776;
+            should_chunk = true;
             break;
         default:
             invalid_usage();
@@ -67,7 +71,7 @@ int main(int argc, char *argv[]) {
     printf("\nSize: %lu bytes\nDestination: %s\n", size, destination);
     printf("Writing file...\n");
 
-    write_dummy_file(size, destination);
+    write_dummy_file(size, destination, should_chunk);
 
     printf("\n");
 
@@ -79,7 +83,7 @@ int invalid_usage() {
     exit(EXIT_FAILURE);
 }
 
-void write_dummy_file(uint64_t size, char *destination) {
+void write_dummy_file(uint64_t size, char *destination, bool should_chunk) {
     FILE *fptr;
     if ((fptr = fopen(destination, "wb")) == NULL) {
         perror("Failed to open file");
@@ -87,7 +91,10 @@ void write_dummy_file(uint64_t size, char *destination) {
     }
 
     // TODO: Adjust chunk size
-    const int chunk_size = 65536;
+    int chunk_size = 1;
+    if (should_chunk) {
+        chunk_size = 65536;
+    }
     uint64_t *buf = malloc(chunk_size);
 
     size_t written = 0;
