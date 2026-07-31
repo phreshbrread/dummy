@@ -8,9 +8,16 @@ fn main() {
         invalid_args();
     }
 
-    let of = out::OutputFile::new("Test", 4);
+    let s: u128 = args[1].parse().unwrap();
+    let u: char = args[2].parse().unwrap();
 
+    let of = out::OutputFile::new(s, u, &args[3]);
     dbg!(&of);
+
+    match out::OutputFile::write(of) {
+        Ok(_) => println!("Success"),
+        Err(e) => println!("Failed: {:}", e),
+    };
 }
 
 fn invalid_args() -> ! {

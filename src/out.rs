@@ -1,18 +1,25 @@
-use std::path::{Path, PathBuf};
+use std::{fs::File, io, path::{Path, PathBuf}};
 
 #[derive(Debug)]
 pub struct OutputFile {
-    path: PathBuf,
     size: u128,
+    unit: char,
+    path: PathBuf,
 }
 
 impl OutputFile {
-    pub fn new(p: &str, s: u128) -> Self {
+    pub fn new(s: u128, u: char, p: &str) -> Self {
         let of = OutputFile {
-            path: p.into(),
             size: s,
+            unit: u,
+            path: p.into(),
         };
 
         return of;
+    }
+
+    pub fn write(of: OutputFile) -> Result<(), io::Error> {
+        let mut file = File::create(of.path)?;
+        return Ok(());
     }
 }
