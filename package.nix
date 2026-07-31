@@ -7,14 +7,13 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname   = "dummy";
-  version = "1.4.3";
+  version = "1.0.0";
 
   # Get source from GitHub repo
   src = fetchFromGitHub {
     owner = "phreshbrread";
     repo  = "dummy";
     rev   = "v${finalAttrs.version}";
-    hash  = "sha256-15WGEhWHqDLcJNf9nmrQI+fmY2MtWgHb1FBwNaF2iSI=";
   };
 
   nativeBuildInputs = [
@@ -22,13 +21,12 @@ stdenv.mkDerivation (finalAttrs: {
   ];
 
   buildInputs = [
-    ncurses
   ];
 
   buildPhase = ''
     runHook preBuild
 
-    make dummy
+    make
 
     runHook postBuild
   '';
