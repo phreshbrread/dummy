@@ -20,6 +20,7 @@ impl OutputFile {
 
     pub fn write(of: OutputFile) -> Result<(), io::Error> {
         let mut file = File::create(of.path)?;
+        file.set_len(of.size as u64)?;
         return Ok(());
     }
 }
