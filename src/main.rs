@@ -1,7 +1,5 @@
 mod output;
 
-use std::path::PathBuf;
-
 use crate::output::OutputFile;
 use dummy::*;
 
@@ -23,16 +21,4 @@ fn main() {
         Ok(_) => println!("Success"),
         Err(e) => println!("Failed: {:}", e),
     };
-}
-
-fn show_help(ivt: InvalidArgType) -> ! {
-    match ivt {
-        InvalidArgType::InvalidCount => println!("Incorrect argument count."),
-        InvalidArgType::InvalidUnit => println!("Invalid unit."),
-        InvalidArgType::InvalidSize => println!("Invalid size."),
-        InvalidArgType::InvalidPath => println!("Invalid path."),
-    };
-
-    println!("Usage: dummy [size] [unit] [destination]");
-    std::process::exit(1);
 }
