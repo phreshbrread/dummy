@@ -22,17 +22,29 @@ impl OutputFile {
         return of;
     }
 
-    pub fn write(of: OutputFile) -> Result<(), io::Error> {
+    pub fn write(of: OutputFile, decimal: bool) -> Result<(), io::Error> {
         let file = File::create(of.path)?;
+        let mut final_size: u64 = 0;
 
-        let final_size: u64 = of.size * match of.unit {
-            'b' => 1,
-            'k' => 1024,
-            'm' => 1024_u64.pow(2),
-            'g' => 1024_u64.pow(3),
-            't' => 1024_u64.pow(4),
-            _ => 0, // Unit validity check is done before calling this function
-        };
+        if !decimal {
+            final_size = of.size * match of.unit {
+                'b' => 1,
+                'k' => 1024,
+                'm' => 1024_u64.pow(2),
+                'g' => 1024_u64.pow(3),
+                't' => 1024_u64.pow(4),
+                _ => 0, // Unit validity check is done before calling this function
+            };
+        } else {
+            final_size = of.size * match of.unit {
+                'b' => 1,
+                'k' => 1000,
+                'm' => 1000_u64.pow(2),
+                'g' => 1000_u64.pow(3),
+                't' => 1000_u64.pow(4),
+                _ => 0, // Unit validity check is done before calling this function
+            };
+        }
 
         file.set_len(final_size)?;
 

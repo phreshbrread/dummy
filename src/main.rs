@@ -17,7 +17,7 @@ fn main() {
     let out_file = OutputFile::new(s, u, args.destination);
     dbg!(&out_file);
 
-    match OutputFile::write(out_file) {
+    match OutputFile::write(out_file, args.decimal) {
         Ok(_) => println!("Success"),
         Err(e) => println!("Failed: {:}", e),
     };
