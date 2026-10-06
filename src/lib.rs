@@ -10,7 +10,7 @@ pub enum InvalidArgType {
 
 #[derive(Debug, Parser)]
 pub struct Args {
-    /// Enable to use decimal values instead of binary
+    /// Use decimal instead of binary for file size
     #[arg(short, long)]
     pub decimal: bool,
     /// Number of <UNIT>s the output file should be
