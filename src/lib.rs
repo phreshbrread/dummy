@@ -24,4 +24,3 @@ pub struct Args {
 pub fn parse_cli_args() -> Args {
     return Args::parse();
 }
-
